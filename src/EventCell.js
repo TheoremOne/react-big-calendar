@@ -150,7 +150,7 @@ class EventCell extends React.Component {
               /*onDoubleClick={e => onDoubleClick(event, e)}*/
               onDoubleClick={this.handleEditing}
             >
-              <StyledEvent {...data.styles}>
+              <StyledEvent {...data && data.styles}>
                 <div className="rbc-event-content" title={title}>
                   {Event && !this.state.isEditingEventTitle ? (
                     <Event event={data} title={title} />

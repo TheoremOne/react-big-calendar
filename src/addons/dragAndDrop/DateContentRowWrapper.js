@@ -111,6 +111,7 @@ class DateContentRowWrapper extends Component {
 
       dragPos.level = nextDragData.level;
       window.RBC_DRAG_POS = dragPos;
+
       return this.setState(prev => ({
         ...levels,
         insertedOutsideEvent: true,
@@ -127,12 +128,13 @@ class DateContentRowWrapper extends Component {
 
     const { level: dlevel, left: dleft, right: dright, span: dspan } = drag;
     const { level: hlevel, left: hleft, right: hright, span: hspan } = hover;
-    const { levels } = this.state;
+    let { levels } = this.state;
 
     // flatten out segments in a single day cell
     const overlappingSeg = ({ left, right }) => {
       return right >= dleft && dright >= left;
     };
+
     let cellSegs = levels.map(segs => {
       const idx = findIndex(overlappingSeg)(segs);
       if (idx === -1) {
@@ -190,7 +192,30 @@ class DateContentRowWrapper extends Component {
     });
 
     window.RBC_DRAG_POS = { ...drag, level: hlevel };
-    this.setState({ levels: nextLevels, hover, hoverData });
+
+    const e = this.handleEventReorder(dragEvent.data, hoverData);
+    e.sort(({ weight: a }, { weight: b }) => (a < b ? -1 : 1));
+    levels = withLevels({ ...this.props, events: e }).levels;
+
+    this.setState({
+      levels,
+      hover,
+      hoverData,
+    });
+  };
+
+  handleEventReorder = (a, b) => {
+    const { events } = this.props;
+    const index = findIndex(item => item.id === a.id)(events);
+
+    const skew = a.weight > b.weight ? -1 : 1;
+    let remainder = Math.ceil(b.weight / 100) * 100 - b.weight;
+    remainder = remainder <= 0 ? 100 : remainder;
+    a.weight = b.weight + remainder / 2 * skew;
+
+    events[index] = a;
+
+    return events;
   };
 
   handleSegmentDrop = ({ level, left, right }) => {
@@ -201,6 +226,7 @@ class DateContentRowWrapper extends Component {
     if (!hoverData) return;
 
     const dragSeg = levels[drag.level].find(({ left }) => drag.left === left);
+
     if (!dragSeg) {
       this.setState({ drag: null, hover: null, hoverData: null });
       return;
@@ -216,8 +242,10 @@ class DateContentRowWrapper extends Component {
       return acc;
     }, []);
 
-    // return draggedData, hoverData, idxa, idxb, segments
-    onEventReorder && onEventReorder(dragData, hoverData, drag.level, level, events);
+    //return draggedData, hoverData, idxa, idxb, segments
+    //onEventReorder && onEventReorder(dragData, hoverData, drag.level, level, events);
+    onEventReorder && onEventReorder(levels);
+
     window.RBC_DRAG_POS = null;
     this.setState({ hover: null, hoverData: null });
   };

@@ -31,9 +31,9 @@ export default [
     id: cuid(),
     title: 'All Day Event',
     allDay: true,
-    start: new Date(2015, 3, 7),
-    end: new Date(2015, 3, 10),
-    weight: 200,
+    start: new Date(2015, 3, 5),
+    end: new Date(2015, 3, 11),
+    weight: 100,
   },
   {
     id: cuid(),
@@ -52,9 +52,9 @@ export default [
   {
     id: cuid(),
     title: 'Some Event',
-    start: new Date(2015, 3, 9, 0, 0, 0),
-    end: new Date(2015, 3, 9, 0, 0, 0),
-    weight: 100,
+    start: new Date(2015, 3, 7, 0, 0, 0),
+    end: new Date(2015, 3, 7, 0, 0, 0),
+    weight: 200,
   },
   {
     id: cuid(),
