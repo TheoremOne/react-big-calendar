@@ -85,21 +85,12 @@ class Dnd extends React.Component {
 
   eventsSorter = ({ weight: a }, { weight: b }) => (a < b ? -1 : 1);
 
-  handleEventReorder = (a, b, _idxa, _idxb, list) => {
-    let { events } = this.state;
+  handleEventReorder = levels => {
+    const result = [].concat(...levels);
 
-    const idxa = events.indexOf(a);
-    const idxb = events.indexOf(b);
-
-    (a = events[idxa]), (b = events[idxb]);
-
-    const skew = a.weight > b.weight ? -1 : 1;
-    let remainder = Math.ceil(b.weight / 100) * 100 - b.weight;
-    remainder = remainder <= 0 ? 100 : remainder;
-    a.weight = b.weight + remainder / 2 * skew;
-
-    events[idxa] = a;
-    this.setState({ events });
+    this.setState({
+      events: this.state.events.map(event => find(result, { id: event.id }) || event),
+    });
   };
 
   rightClickEventMenu = props => {
