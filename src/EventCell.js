@@ -90,6 +90,20 @@ class EventCell extends React.Component {
     this.setState({ isEditingEventTitle: false });
   };
 
+  handleSelect = (eventType, data) => e => {
+    switch (eventType) {
+      case 'blur': {
+        this.props.onSelect({}, e);
+      }
+      case 'click': {
+        this.props.onSelect(data, e);
+      }
+      default: {
+        return;
+      }
+    }
+  };
+
   render() {
     let {
       className,
@@ -139,17 +153,8 @@ class EventCell extends React.Component {
                 'rbc-event-continues-prior': continuesPrior,
                 'rbc-event-continues-after': continuesAfter,
               })}
-              onBlur={e => {
-                // https://gist.github.com/pstoica/4323d3e6e37e8a23dd59 - AR Mon Oct 23 10:35:26 EDT 2017
-                const currentTarget = e.currentTarget;
-                setTimeout(() => {
-                  if (!currentTarget.contains(document.activeElement)) {
-                    onSelect({}, e);
-                  }
-                  // 200ms is given to setTimeout so that it fires after a right-click event - AR Tue Oct 24 14:10:25 EDT 2017
-                }, 200);
-              }}
-              onClick={e => onSelect(data, e)}
+              onBlur={this.handleSelect('blur')}
+              onClick={this.handleSelect('click', data)}
               /*onDoubleClick={e => onDoubleClick(event, e)}*/
               onDoubleClick={this.handleEditing}
             >
