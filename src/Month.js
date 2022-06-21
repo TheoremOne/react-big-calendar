@@ -141,6 +141,7 @@ class MonthView extends React.Component {
     //   this.props.onNavigate(navigate.NEXT_DAY);
     // });
   }
+
   generateId(date) {
     return [date.getMonth() + 1, date.getDate(), date.getFullYear()].join('-');
   }
@@ -339,8 +340,13 @@ class MonthView extends React.Component {
   };
 
   handleSelectEvent = (...args) => {
+    const [_, e] = args;
     this.clearSelection();
     notify(this.props.onSelectEvent, args);
+
+    if (e && e.shiftKey) {
+      notify(this.props.onShiftSelect, e);
+    }
   };
 
   handleDoubleClickEvent = (...args) => {
