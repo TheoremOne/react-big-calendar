@@ -186,6 +186,17 @@ class Calendar extends React.Component {
     onSelecting: PropTypes.func,
 
     /**
+     * Callback fired when a calendar event is selected while pressing shift key.
+     *
+     * ```js
+     * (e: SyntheticEvent) => any
+     * ```
+     *
+     * @controllable selected
+     */
+    onShiftSelect: PropTypes.func,
+
+    /**
      * The selected event, if any.
      */
     selected: PropTypes.object,
@@ -854,7 +865,14 @@ class Calendar extends React.Component {
     if (view !== this.props.view && isValidView(view, this.props)) this.props.onView(view);
   };
 
-  handleSelectEvent = eventInfo => {
+  handleSelectEvent = (eventInfo, ...args) => {
+    const [event] = args;
+    event.persist();
+    if (event && event.shiftKey) {
+      console.log('isSelectingShiftKey');
+      notify(this.props.onShiftSelect, event);
+    }
+
     this.setState({ selected: eventInfo }, () => {
       notify(this.props.onSelectEvent, eventInfo);
     });
