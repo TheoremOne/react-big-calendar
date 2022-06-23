@@ -31,7 +31,7 @@ export default function withDragAndDrop(Calendar, { backend = html5Backend } = {
 
     constructor(...args) {
       super(...args);
-      this.state = { isDragging: false, isResizing: false, events: this.props.events || [] };
+      this.state = { isDragging: false, isResizing: false, events: [] };
 
       // stateful props that don't require a render
       this.store = {};
