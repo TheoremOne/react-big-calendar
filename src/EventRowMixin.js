@@ -15,6 +15,7 @@ export default {
     start: PropTypes.instanceOf(Date),
 
     selected: PropTypes.object,
+    selectedList: PropTypes.array,
     eventPropGetter: PropTypes.func,
     titleAccessor: accessor,
     allDayAccessor: accessor,
@@ -30,6 +31,7 @@ export default {
   defaultProps: {
     segments: [],
     selected: {},
+    selectedList: [],
     slots: 7,
   },
 
@@ -45,10 +47,16 @@ export default {
       onInlineEditEventTitle,
       onSelect,
       selected,
+      selectedList,
       start,
       startAccessor,
       titleAccessor,
     } = props;
+    let _isSelected = isSelected(event.data, selected);
+
+    if (selectedList.length) {
+      _isSelected = selectedList.some(evt => evt.id === event.data.id);
+    }
 
     return (
       <EventCell
@@ -61,7 +69,8 @@ export default {
         onDoubleClick={onDoubleClick}
         onInlineEditEventTitle={onInlineEditEventTitle}
         onSelect={onSelect}
-        selected={isSelected(event.data, selected)}
+        selected={_isSelected}
+        selectedList={selectedList}
         slotEnd={end}
         slotStart={start}
         startAccessor={startAccessor}

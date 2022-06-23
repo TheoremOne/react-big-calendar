@@ -50,6 +50,7 @@ let propTypes = {
   endAccessor: accessor.isRequired,
 
   selected: PropTypes.object,
+  selectedList: PropTypes.array,
   selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
   longPressThreshold: PropTypes.number,
 
@@ -188,6 +189,7 @@ class MonthView extends React.Component {
       eventPropGetter,
       messages,
       selected,
+      selectedList,
       now,
       date,
       longPressThreshold,
@@ -236,6 +238,7 @@ class MonthView extends React.Component {
         renderHeader={this.readerDateHeading}
         selectable={selectable}
         selected={selected}
+        selectedList={selectedList}
         startAccessor={startAccessor}
         titleAccessor={titleAccessor}
         onNavigate={onNavigate}
@@ -340,13 +343,8 @@ class MonthView extends React.Component {
   };
 
   handleSelectEvent = (...args) => {
-    const [_, e] = args;
     this.clearSelection();
     notify(this.props.onSelectEvent, args);
-
-    if (e && e.shiftKey) {
-      notify(this.props.onShiftSelect, e);
-    }
   };
 
   handleDoubleClickEvent = (...args) => {

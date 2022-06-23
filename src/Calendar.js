@@ -80,6 +80,7 @@ class Calendar extends React.Component {
   state = {
     selected: {},
     switchMonthHeader: false,
+    selectedList: [],
   };
 
   static propTypes = {
@@ -791,6 +792,7 @@ class Calendar extends React.Component {
           onShowMore={this._showMore}
           ref="view"
           selected={this.state.selected}
+          selectedList={this.state.selectedList}
           showAllEvents={this.props.showAllEvents}
         />
         <div
@@ -838,6 +840,7 @@ class Calendar extends React.Component {
             onShowMore={this._showMore}
             ref="view"
             selected={this.state.selected}
+            selectedList={this.state.selectedList}
             showAllEvents={this.props.showAllEvents}
           />
         </div>
@@ -867,10 +870,39 @@ class Calendar extends React.Component {
 
   handleSelectEvent = (eventInfo, ...args) => {
     const [event] = args;
+    const { selectedList } = this.state;
     event.persist();
+
     if (event && event.shiftKey) {
-      console.log('isSelectingShiftKey');
-      notify(this.props.onShiftSelect, event);
+      const copySelectedList = selectedList;
+      let eventIndex = null,
+        hasEvent = false;
+
+      for (let index = 0; index < selectedList.length; index++) {
+        const evt = selectedList[index];
+
+        if (evt.id === eventInfo.id) {
+          eventIndex = index;
+          hasEvent = true;
+          break;
+        }
+      }
+
+      if (hasEvent) {
+        copySelectedList.splice(eventIndex, eventIndex + 1);
+      } else {
+        copySelectedList.push(eventInfo);
+      }
+      this.setState({ selectedList: copySelectedList }, () => {
+        console.log('is selecting', copySelectedList);
+        notify(this.props.onShiftSelect, copySelectedList);
+      });
+    } else {
+      selectedList.length = 0;
+      this.setState({ selectedList }, () => {
+        console.log('left selecting', selectedList);
+        notify(this.props.onShiftSelect, selectedList);
+      });
     }
 
     this.setState({ selected: eventInfo }, () => {

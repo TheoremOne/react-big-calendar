@@ -1,6 +1,6 @@
 {
   "name": "@theoremone/th1-calendar",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "React Calendar",
   "contributors": ["Brian Diaz <brian.diaz@thinklemma.com>"],
   "repository": "https://github.com/TheoremOne/react-big-calendar",
