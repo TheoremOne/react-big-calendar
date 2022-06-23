@@ -49,6 +49,7 @@ class DayColumn extends React.Component {
     messages: PropTypes.object,
 
     selected: PropTypes.object,
+    selectedList: PropTypes.array,
     selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
     eventOffset: PropTypes.number,
     longPressThreshold: PropTypes.number,
@@ -127,6 +128,7 @@ class DayColumn extends React.Component {
       culture,
       eventPropGetter,
       selected,
+      selectedList,
       messages,
       eventComponent,
       eventTimeRangeFormat,
@@ -185,6 +187,12 @@ class DayColumn extends React.Component {
       }
 
       let _isSelected = isSelected(event, selected);
+
+      console.log({ selectedList });
+
+      if (selectedList.length) {
+        _isSelected = selectedList.some(evt => evt.id === event.data.id);
+      }
 
       if (eventPropGetter)
         var { style: xStyle, className } = eventPropGetter(event, start, end, _isSelected);

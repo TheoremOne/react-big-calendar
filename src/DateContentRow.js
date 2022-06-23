@@ -25,6 +25,7 @@ const propTypes = {
 
   container: PropTypes.func,
   selected: PropTypes.object,
+  selectedList: PropTypes.array,
   selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
   longPressThreshold: PropTypes.number,
 

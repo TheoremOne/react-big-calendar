@@ -21,6 +21,7 @@ let propTypes = {
   onInlineEditEventTitle: PropTypes.func.isRequired,
   onSelect: PropTypes.func,
   selected: PropTypes.bool,
+  selectedList: PropTypes.array,
   slotEnd: PropTypes.instanceOf(Date),
   slotStart: PropTypes.instanceOf(Date),
   startAccessor: accessor,
