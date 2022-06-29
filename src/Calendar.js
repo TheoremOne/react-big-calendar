@@ -894,13 +894,12 @@ class Calendar extends React.Component {
         copySelectedList.push(eventInfo);
       }
       this.setState({ selectedList: copySelectedList }, () => {
-        console.log('is selecting', copySelectedList);
         notify(this.props.onShiftSelect, copySelectedList);
       });
     } else {
       selectedList.length = 0;
+      selectedList.push(eventInfo);
       this.setState({ selectedList }, () => {
-        console.log('left selecting', selectedList);
         notify(this.props.onShiftSelect, selectedList);
       });
     }
