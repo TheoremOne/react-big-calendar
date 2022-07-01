@@ -28,6 +28,8 @@ class BackgroundCells extends React.Component {
     range: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
     rtl: PropTypes.bool,
     type: PropTypes.string,
+    calendarId: PropTypes.number,
+    activeCalendar: PropTypes.number,
   };
 
   constructor(props, context) {
@@ -67,14 +69,20 @@ class BackgroundCells extends React.Component {
   }
 
   render() {
-    let { range, cellWrapperComponent: Wrapper, date: currentDate } = this.props;
+    let {
+      range,
+      cellWrapperComponent: Wrapper,
+      date: currentDate,
+      calendarId,
+      activeCalendar,
+    } = this.props;
     let { selecting, startIdx, endIdx, click } = this.state;
 
     return (
       <div className="rbc-row-bg">
         {range.map((date, index) => {
           const cellId = this.generateId(date);
-          const isNavigatedCellId = this.isSelectedCell(cellId);
+          const isNavigatedCellId = this.isSelectedCell(cellId) && activeCalendar === calendarId;
           let selected = selecting && index >= startIdx && index <= endIdx;
           return (
             <Wrapper key={index} value={date} range={range}>

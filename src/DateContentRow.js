@@ -45,6 +45,8 @@ const propTypes = {
   minRows: PropTypes.number.isRequired,
   maxRows: PropTypes.number.isRequired,
   onNavigate: PropTypes.func,
+  calendarId: PropTypes.number,
+  activeCalendar: PropTypes.number,
 };
 
 const defaultProps = {
@@ -160,6 +162,8 @@ class DateContentRow extends React.Component {
       longPressThreshold,
       isArrowNavigated,
       onNavigate,
+      calendarId,
+      activeCalendar,
       ...props
     } = this.props;
 
@@ -183,6 +187,8 @@ class DateContentRow extends React.Component {
           longPressThreshold={longPressThreshold}
           onNavigate={onNavigate}
           isArrowNavigated={isArrowNavigated}
+          calendarId={calendarId}
+          activeCalendar={activeCalendar}
         />
 
         <div className="rbc-row-content">

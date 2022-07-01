@@ -77,8 +77,8 @@ let propTypes = {
       y: PropTypes.number,
     }),
   ]),
-
-  onNavigate: PropTypes.func.isRequired,
+  calendarId: PropTypes.number,
+  activeCalendar: PropTypes.number,
 };
 
 class MonthView extends React.Component {
@@ -195,6 +195,8 @@ class MonthView extends React.Component {
       longPressThreshold,
       eventsSorter,
       onNavigate,
+      activeCalendar,
+      calendarId,
     } = this.props;
 
     const { needLimitMeasure, rowLimit } = this.state;
@@ -242,6 +244,8 @@ class MonthView extends React.Component {
         startAccessor={startAccessor}
         titleAccessor={titleAccessor}
         onNavigate={onNavigate}
+        activeCalendar={activeCalendar}
+        calendarId={calendarId}
       />
     );
   };

@@ -188,8 +188,6 @@ class DayColumn extends React.Component {
 
       let _isSelected = isSelected(event, selected);
 
-      console.log({ selectedList });
-
       if (selectedList.length) {
         _isSelected = selectedList.some(evt => evt.id === event.data.id);
       }

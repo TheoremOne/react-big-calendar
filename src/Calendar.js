@@ -32,6 +32,7 @@ import { RIGHT_CLICK_EVENT, RIGHT_CLICK_DAY_CELL } from './ContextMenuTypes';
 import addMonths from 'date-fns/add_months';
 import getMonth from 'date-fns/get_month';
 import getYear from 'date-fns/get_year';
+import { subMonths } from 'date-fns';
 
 const MONTHS = [
   'January',
@@ -81,7 +82,23 @@ class Calendar extends React.Component {
     selected: {},
     switchMonthHeader: false,
     selectedList: [],
+    startOfCurrentMonth: null,
+    endOfCurrentMonth: null,
+    activeCalendar: null,
   };
+
+  constructor(props) {
+    super(props);
+    const date = new Date();
+    this.state = {
+      startOfCurrentMonth: new Date(date.getFullYear(), date.getMonth(), 1),
+      endOfCurrentMonth: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+      activeCalendar: 1,
+      selected: {},
+      switchMonthHeader: false,
+      selectedList: [],
+    };
+  }
 
   static propTypes = {
     /**
@@ -716,6 +733,55 @@ class Calendar extends React.Component {
     return <ConnectedMenu />;
   }
 
+  handleCalendarMonthChange = (date: Date) => {
+    const dateTime = new Date(date).getTime();
+    let { startOfCurrentMonth, endOfCurrentMonth, activeCalendar } = this.state;
+    const startOfCurrentMonthTime = startOfCurrentMonth.getTime();
+    const endOfCurrentMonthTime = endOfCurrentMonth.getTime();
+    /**
+    if currentDate is less than startOfCurrentMonth
+        calendarActivated should be the other one
+        change startOfCurrentMonth adn endOfCurrentMonth to selected month
+    else if currentDate is bigger than endOfCurrentMonth
+        calendarActivated should be the other one
+        change startOfCurrentMonth and endOfCurrentMonth to selected month
+    else
+        do nothing
+     */
+
+    if (dateTime < startOfCurrentMonthTime) {
+      activeCalendar = activeCalendar === 1 ? 2 : 1;
+      startOfCurrentMonth = new Date(
+        startOfCurrentMonth.getFullYear(),
+        startOfCurrentMonth.getMonth() - 1,
+        1,
+      );
+      endOfCurrentMonth = new Date(
+        endOfCurrentMonth.getFullYear(),
+        endOfCurrentMonth.getMonth(),
+        0,
+      );
+    } else if (dateTime > endOfCurrentMonthTime) {
+      activeCalendar = activeCalendar === 1 ? 2 : 1;
+      startOfCurrentMonth = new Date(
+        startOfCurrentMonth.getFullYear(),
+        startOfCurrentMonth.getMonth() + 1,
+        1,
+      );
+      endOfCurrentMonth = new Date(
+        endOfCurrentMonth.getFullYear(),
+        endOfCurrentMonth.getMonth() + 2,
+        0,
+      );
+    }
+
+    this.setState({
+      activeCalendar,
+      startOfCurrentMonth,
+      endOfCurrentMonth,
+    });
+  };
+
   render() {
     let {
       view,
@@ -730,8 +796,10 @@ class Calendar extends React.Component {
       elementProps,
       toolbarExtras,
       date: current,
+      showTwoMonths,
       ...props
     } = this.props;
+    const { startOfCurrentMonth, endOfCurrentMonth, activeCalendar } = this.state;
 
     formats = defaultFormats(formats);
     messages = message(messages);
@@ -746,11 +814,17 @@ class Calendar extends React.Component {
       dateContentRowWrapper: DateContentRowWrapper,
     });
 
-    const nextMonth = addMonths(current, 1);
+    let nextMonth = addMonths(current, 1);
+    let labelNextMonth = '';
+
+    if (showTwoMonths) {
+      nextMonth = activeCalendar === 2 ? current : nextMonth;
+      labelNextMonth = View.title(nextMonth, { formats, culture });
+      current = subMonths(nextMonth, 1);
+    }
 
     let CalToolbar = components.toolbar || Toolbar;
     const label = View.title(current, { formats, culture });
-    const labelNextMonth = View.title(nextMonth, { formats, culture });
 
     return (
       <div
@@ -794,11 +868,13 @@ class Calendar extends React.Component {
           selected={this.state.selected}
           selectedList={this.state.selectedList}
           showAllEvents={this.props.showAllEvents}
+          activeCalendar={activeCalendar}
+          calendarId={1}
         />
         <div
           id="month-view-two"
           className="rbc-month-view-two"
-          style={{ display: this.props.showTwoMonths ? 'block' : 'none' }}
+          style={{ display: showTwoMonths ? 'block' : 'none' }}
         >
           <div
             className="rbc-month-header-two"
@@ -842,6 +918,8 @@ class Calendar extends React.Component {
             selected={this.state.selected}
             selectedList={this.state.selectedList}
             showAllEvents={this.props.showAllEvents}
+            activeCalendar={activeCalendar}
+            calendarId={2}
           />
         </div>
 
@@ -852,7 +930,7 @@ class Calendar extends React.Component {
   }
 
   handleNavigate = (action, newDate) => {
-    let { view, date, onNavigate, ...props } = this.props;
+    let { view, date, onNavigate, showTwoMonths, ...props } = this.props;
     let ViewComponent = this.getView();
 
     date = moveDate(ViewComponent, {
@@ -860,6 +938,10 @@ class Calendar extends React.Component {
       action,
       date: newDate || date,
     });
+
+    if (showTwoMonths) {
+      this.handleCalendarMonthChange(date);
+    }
 
     onNavigate(date, view, action);
   };
